@@ -21,6 +21,14 @@ case class BinarySearchTree[A <% Ordered[A]](item: A, left: Option[BinarySearchT
     }
   }
 
+  def insertMultiple(values: List[A]): BinarySearchTree[A] = {
+    var currentBst = this
+    for (v <- values) {
+      currentBst = currentBst.insert(v)
+    }
+    currentBst
+  }
+
   @tailrec
   final def search(v: A): Boolean = {
     if (v == this.item) {
@@ -36,5 +44,25 @@ case class BinarySearchTree[A <% Ordered[A]](item: A, left: Option[BinarySearchT
         case None => false
       }
     }
+  }
+
+  def collect(): List[A] = {
+    val itemList: List[A] = List(this.item)
+    val leftItems: List[A] = this.left match {
+      case Some(lTree) => lTree.collect()
+      case None => List()
+    }
+    val rightItems: List[A] = this.right match {
+      case Some(rTree) => rTree.collect()
+      case None => List()
+    }
+    leftItems ++ itemList ++ rightItems
+  }
+
+  def map[B <% Ordered[B]](f: A=>B): BinarySearchTree[B] = {
+    val items: List[A] = this.collect
+    val newItems: List[B] = items.map(f)
+    val newBst = BinarySearchTree[B](newItems.head, None, None)
+    newBst.insertMultiple(newItems.tail)
   }
 }

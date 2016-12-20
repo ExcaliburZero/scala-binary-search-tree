@@ -22,11 +22,7 @@ case class BinarySearchTree[A <% Ordered[A]](item: A, left: Option[BinarySearchT
   }
 
   def insertMultiple(values: List[A]): BinarySearchTree[A] = {
-    var currentBst = this
-    for (v <- values) {
-      currentBst = currentBst.insert(v)
-    }
-    currentBst
+    values.foldLeft(this)((tree, v) => tree.insert(v))
   }
 
   @tailrec

@@ -20,6 +20,10 @@ sealed trait BinarySearchTree2[A] {
     }
   }
 
+  def insertMultiple(values: List[A])(implicit ev: Ordering[A]): BinarySearchTree2[A] = {
+    values.foldLeft(this)((tree, v) => tree.insert(v))
+  }
+
   @tailrec
   final def search(v: A)(implicit ev: Ordering[A]): Boolean = {
     this match {
@@ -33,6 +37,20 @@ sealed trait BinarySearchTree2[A] {
           right.search(v)
         }
     }
+  }
+
+  def collect(): List[A] = {
+    this match {
+      case Empty() => List()
+      case Branch(value, left, right) =>
+        left.collect() ++ List(value) ++ right.collect()
+    }
+  }
+
+  def map[B](f: A => B)(implicit ev: Ordering[B]): BinarySearchTree2[B] = {
+    val currentItems = this.collect()
+    val newItems = currentItems.map(f)
+    Empty().insertMultiple(newItems)
   }
 }
 case class Empty[A]() extends BinarySearchTree2[A]

@@ -1,4 +1,5 @@
 import Ordering.Implicits._
+import scala.annotation.tailrec
 
 sealed trait BinarySearchTree2[A] {
   def insert(v: A)(implicit ev: Ordering[A]): BinarySearchTree2[A] = {
@@ -15,6 +16,21 @@ sealed trait BinarySearchTree2[A] {
             case Empty() => Branch(value, left, Branch(v, Empty(), Empty()))
             case Branch(_, _, _) => Branch(value, left, right.insert(v))
           }
+        }
+    }
+  }
+
+  @tailrec
+  final def search(v: A)(implicit ev: Ordering[A]): Boolean = {
+    this match {
+      case Empty() => false
+      case Branch(value, left, right) =>
+        if (v == value) {
+          true
+        } else if (v < value) {
+          left.search(v)
+        } else {
+          right.search(v)
         }
     }
   }

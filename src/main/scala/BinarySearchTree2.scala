@@ -24,6 +24,13 @@ sealed trait BinarySearchTree2[A] {
     values.foldLeft(this)((tree, v) => tree.insert(v))
   }
 
+  def size(): Int = {
+    this match {
+      case Empty() => 0
+      case Branch(_, left, right) => left.size() + right.size() + 1
+    }
+  }
+
   @tailrec
   final def search(v: A)(implicit ev: Ordering[A]): Boolean = {
     this match {
